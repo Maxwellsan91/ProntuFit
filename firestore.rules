@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin()    { return request.auth.token.role == 'admin'; }
+    function isPersonal() { return request.auth.token.role == 'personal'; }
+    function isMedico()   { return request.auth.token.role == 'medico'; }
+    function isAluno(uid) { return request.auth != null && request.auth.uid == uid; }
+
+    function profissionalTemAcesso(alunoUid) {
+      return exists(/databases/$(database)/documents/assignments/$(alunoUid)) &&
+        (
+          (isPersonal() && get(/databases/$(database)/documents/assignments/$(alunoUid)).data.personalId == request.auth.uid) ||
+          (isMedico()   && get(/databases/$(database)/documents/assignments/$(alunoUid)).data.medicoId   == request.auth.uid)
+        );
+    }
+
+    match /students/{alunoUid=**} {
+      allow read: if isAdmin()
+        || profissionalTemAcesso(alunoUid)
+        || (isAluno(alunoUid) && request.method == 'get');
+      allow write: if isAdmin() || profissionalTemAcesso(alunoUid);
+    }
+
+    match /users/{uid} {
+      allow read: if isAdmin() || isAluno(uid);
+      allow write: if isAdmin() || isAluno(uid);
+    }
+
+    match /assignments/{alunoUid} {
+      allow read: if isAdmin() || isPersonal() || isMedico();
+      allow write: if isAdmin();
+    }
+
+    // Audit via backend apenas
+    match /audit/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+  }
+}
