@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     name,
     value: sessionCookie,
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
     maxAge: expiresIn / 1000,
@@ -28,6 +28,6 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE() {
   const name = process.env.SESSION_COOKIE_NAME || '__session';
-  cookies().set({ name, value: '', httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 });
+  cookies().set({ name, value: '', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
   return NextResponse.json({ ok: true });
 }
