@@ -13,6 +13,8 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // Monitor authentication state
   useEffect(() => {
@@ -23,17 +25,37 @@ export default function Navbar() {
     return () => unsubscribe();
   }, []);
 
+  // Handle scroll to show/hide navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar when scrolling up or at the top
+      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+        setIsVisible(true);
+      } else {
+        // Hide navbar when scrolling down
+        setIsVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   // Ocultar navbar na página de login
   if (pathname === '/login') {
     return null;
   }
 
   const navLinks = [
-    { href: '/', label: 'Início' },
-    { href: '/recursos', label: 'Recursos' },
-    { href: '/planos', label: 'Planos' },
-    { href: '/sobre', label: 'Sobre' },
-    { href: '/contato', label: 'Contato' },
+    { href: '/', label: 'Home' },
+    { href: '/recursos', label: 'Our Services' },
+    { href: '/sobre', label: 'About Us' },
+    { href: '/contato', label: 'Contact Us' },
+    { href: '/faq', label: 'FAQ' },
   ];
 
   const handleLogout = async () => {
@@ -59,81 +81,88 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="navbar" style={{
+      <nav className="navbar navbar-main" style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         zIndex: 1000,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backgroundColor: '#1a1a1a',
         backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-        padding: '1rem 0',
+        padding: '0.75rem 2rem',
         transition: 'all 0.3s ease',
-        boxShadow: '0 2px 20px rgba(0, 0, 0, 0.1)'
+        transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+        borderRadius: '0 0 20px 20px',
+        margin: '0 20px'
       }}>
-        <div className="container" style={{
+        <div className="container navbar-container" style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '0 1rem'
+          margin: '0 auto'
         }}>
           {/* Logo */}
-          <Link href="/" style={{
+          <div className="navbar-logo" style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            textDecoration: 'none',
-            color: '#1f2937'
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '0.5rem'
           }}>
-            <div style={{
-              fontSize: '2rem',
-              fontFamily: 'system-ui, -apple-system, sans-serif'
-            }}>💪</div>
-            <span style={{
-              fontSize: '1.5rem',
-              fontWeight: '700',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+            <Link href="/" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              textDecoration: 'none',
+              color: '#ffffff'
             }}>
-              ProntuFit
-            </span>
-          </Link>
+              {/* Logo Image - Adicione sua imagem aqui */}
+              <img 
+                src="/images/image.png" 
+                alt="Logo" 
+                style={{
+                  height: '28px',
+                  width: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+              <div style={{
+                fontSize: '2rem',
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                display: 'none'
+              }}>💪</div>
+            </Link>
+            
+
+          </div>
 
           {/* Desktop Navigation */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '2rem'
+            gap: '3rem',
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)'
           }} className="hidden md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 style={{
-                  color: pathname === link.href ? '#667eea' : '#6b7280',
+                  color: pathname === link.href ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
                   textDecoration: 'none',
                   fontSize: '1rem',
-                  fontWeight: '500',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
+                  fontWeight: '400',
                   transition: 'all 0.2s ease',
                   position: 'relative'
                 }}
                 onMouseEnter={(e) => {
-                   if (pathname !== link.href) {
-                     (e.target as HTMLElement).style.color = '#667eea';
-                     (e.target as HTMLElement).style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
-                   }
+                   (e.target as HTMLElement).style.color = '#ffffff';
                  }}
                  onMouseLeave={(e) => {
                    if (pathname !== link.href) {
-                     (e.target as HTMLElement).style.color = '#6b7280';
-                     (e.target as HTMLElement).style.backgroundColor = 'transparent';
+                     (e.target as HTMLElement).style.color = 'rgba(255, 255, 255, 0.8)';
                    }
                  }}
               >
@@ -153,7 +182,7 @@ export default function Navbar() {
               <Link
                 href="/area"
                 style={{
-                  color: pathname === '/area' ? '#667eea' : '#6b7280',
+                  color: pathname === '/area' ? '#60a5fa' : '#d1d5db',
                   textDecoration: 'none',
                   fontSize: '0.95rem',
                   fontWeight: '500',
@@ -167,13 +196,13 @@ export default function Navbar() {
                 className="hidden md:flex"
                 onMouseEnter={(e) => {
                   if (pathname !== '/area') {
-                    (e.target as HTMLElement).style.color = '#667eea';
-                    (e.target as HTMLElement).style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+                    (e.target as HTMLElement).style.color = '#60a5fa';
+                    (e.target as HTMLElement).style.backgroundColor = 'rgba(96, 165, 250, 0.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (pathname !== '/area') {
-                    (e.target as HTMLElement).style.color = '#6b7280';
+                    (e.target as HTMLElement).style.color = '#d1d5db';
                     (e.target as HTMLElement).style.backgroundColor = 'transparent';
                   }
                 }}
@@ -188,15 +217,15 @@ export default function Navbar() {
               <Link
                 href="/profissional"
                 style={{
-                  color: '#6b7280',
+                  color: '#d1d5db',
                   textDecoration: 'none',
                   fontSize: '0.95rem',
                   fontWeight: '500',
                   transition: 'color 0.2s ease'
                 }}
                 className="hidden md:block"
-                 onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#667eea'}
-                 onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#6b7280'}
+                 onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#60a5fa'}
+                 onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#d1d5db'}
               >
                 Profissional
               </Link>
@@ -220,60 +249,54 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Login/Logout Button */}
+            {/* Sign Up Button */}
             {user ? (
               <button
                 onClick={handleLogout}
                 style={{
-                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  background: '#ff6b35',
                   color: 'white',
                   border: 'none',
-                  padding: '0.6rem 1.2rem',
-                  borderRadius: '8px',
-                  fontSize: '0.95rem',
+                  padding: '8px 20px',
+                  borderRadius: '25px',
+                  fontSize: '1rem',
                   fontWeight: '500',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 2px 10px rgba(239, 68, 68, 0.3)'
+                  transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                   (e.target as HTMLElement).style.transform = 'translateY(-1px)';
-                   (e.target as HTMLElement).style.boxShadow = '0 4px 15px rgba(239, 68, 68, 0.4)';
+                   (e.target as HTMLElement).style.backgroundColor = '#e55a2b';
                  }}
                  onMouseLeave={(e) => {
-                   (e.target as HTMLElement).style.transform = 'translateY(0)';
-                   (e.target as HTMLElement).style.boxShadow = '0 2px 10px rgba(239, 68, 68, 0.3)';
+                   (e.target as HTMLElement).style.backgroundColor = '#ff6b35';
                  }}
               >
-                Sair
+                Sign out
               </button>
             ) : (
               !loading && (
                 <Link
                   href="/login"
                   style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: '#ff6b35',
                     color: 'white',
                     textDecoration: 'none',
-                    padding: '0.6rem 1.2rem',
-                    borderRadius: '8px',
-                    fontSize: '0.95rem',
+                    padding: '8px 20px',
+                    borderRadius: '25px',
+                    fontSize: '1rem',
                     fontWeight: '500',
                     transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 10px rgba(102, 126, 234, 0.3)',
                     display: 'inline-block'
                   }}
                   onMouseEnter={(e) => {
-                     (e.target as HTMLElement).style.transform = 'translateY(-1px)';
-                     (e.target as HTMLElement).style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                     (e.target as HTMLElement).style.backgroundColor = '#e55a2b';
                    }}
                    onMouseLeave={(e) => {
-                     (e.target as HTMLElement).style.transform = 'translateY(0)';
-                     (e.target as HTMLElement).style.boxShadow = '0 2px 10px rgba(102, 126, 234, 0.3)';
+                     (e.target as HTMLElement).style.backgroundColor = '#ff6b35';
                    }}
                   className="hidden md:inline-block"
                 >
-                  Entrar
+                  Sign up
                 </Link>
               )
             )}
@@ -296,14 +319,14 @@ export default function Navbar() {
                 transition: 'background-color 0.2s ease'
               }}
               className="md:hidden"
-              onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = 'rgba(102, 126, 234, 0.1)'}
+              onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = 'transparent'}
             >
               <span style={{
                 display: 'block',
                 width: '20px',
                 height: '2px',
-                backgroundColor: '#374151',
+                backgroundColor: '#ffffff',
                 margin: '2px 0',
                 transition: 'all 0.3s ease',
                 transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none'
@@ -312,7 +335,7 @@ export default function Navbar() {
                 display: 'block',
                 width: '20px',
                 height: '2px',
-                backgroundColor: '#374151',
+                backgroundColor: '#ffffff',
                 margin: '2px 0',
                 transition: 'all 0.3s ease',
                 opacity: isMobileMenuOpen ? 0 : 1
@@ -321,7 +344,7 @@ export default function Navbar() {
                 display: 'block',
                 width: '20px',
                 height: '2px',
-                backgroundColor: '#374151',
+                backgroundColor: '#ffffff',
                 margin: '2px 0',
                 transition: 'all 0.3s ease',
                 transform: isMobileMenuOpen ? 'rotate(-45deg) translate(7px, -6px)' : 'none'
@@ -356,13 +379,13 @@ export default function Navbar() {
           right: isMobileMenuOpen ? 0 : '-100%',
           width: '280px',
           height: '100vh',
-          backgroundColor: 'rgba(255, 255, 255, 0.98)',
+          backgroundColor: 'rgba(31, 41, 55, 0.98)',
           backdropFilter: 'blur(20px)',
           zIndex: 1000,
           transition: 'right 0.3s ease',
           padding: '2rem 1.5rem',
-          borderLeft: '1px solid rgba(0, 0, 0, 0.1)',
-          boxShadow: '-10px 0 30px rgba(0, 0, 0, 0.1)'
+          borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '-10px 0 30px rgba(0, 0, 0, 0.3)'
         }}
         className="md:hidden"
       >
@@ -378,12 +401,12 @@ export default function Navbar() {
               href={link.href}
               onClick={closeMobileMenu}
               style={{
-                color: pathname === link.href ? '#667eea' : '#374151',
+                color: pathname === link.href ? '#60a5fa' : '#d1d5db',
                 textDecoration: 'none',
                 fontSize: '1.1rem',
                 fontWeight: '500',
                 padding: '0.75rem 0',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                 transition: 'color 0.2s ease'
               }}
             >
@@ -397,12 +420,12 @@ export default function Navbar() {
               href="/area"
               onClick={closeMobileMenu}
               style={{
-                color: pathname === '/area' ? '#667eea' : '#374151',
+                color: pathname === '/area' ? '#60a5fa' : '#d1d5db',
                 textDecoration: 'none',
                 fontSize: '1.1rem',
                 fontWeight: '500',
                 padding: '0.75rem 0',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                 transition: 'color 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
@@ -415,7 +438,7 @@ export default function Navbar() {
           )}
 
           <div style={{
-            borderTop: '1px solid rgba(0, 0, 0, 0.1)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             paddingTop: '1.5rem',
             marginTop: '1rem'
           }}>

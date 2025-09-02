@@ -1,0 +1,83 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGradient" cx="70%" cy="50%" r="80%">
+      <stop offset="0%" style="stop-color:#2a2a2a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="muscleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a4a4a;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#6a6a6a;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#3a3a3a;stop-opacity:0.9" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="5" dy="5" stdDeviation="10" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="url(#bgGradient)"/>
+  
+  <!-- Gym floor reflection -->
+  <rect x="0" y="800" width="1920" height="280" fill="#111" opacity="0.3"/>
+  
+  <!-- Athletic figure silhouette (right side) -->
+  <g transform="translate(1200, 200)" opacity="0.7" filter="url(#shadow)">
+    <!-- Torso -->
+    <path d="M100 200 Q120 180 140 200 L140 350 Q120 370 100 350 Z" fill="url(#muscleGradient)"/>
+    
+    <!-- Arms -->
+    <ellipse cx="80" cy="250" rx="25" ry="60" fill="url(#muscleGradient)" transform="rotate(-20 80 250)"/>
+    <ellipse cx="160" cy="250" rx="25" ry="60" fill="url(#muscleGradient)" transform="rotate(20 160 250)"/>
+    
+    <!-- Shoulders -->
+    <circle cx="85" cy="220" r="30" fill="url(#muscleGradient)"/>
+    <circle cx="155" cy="220" r="30" fill="url(#muscleGradient)"/>
+    
+    <!-- Head -->
+    <circle cx="120" cy="180" r="25" fill="url(#muscleGradient)"/>
+    
+    <!-- Legs -->
+    <ellipse cx="110" cy="420" rx="20" ry="70" fill="url(#muscleGradient)"/>
+    <ellipse cx="130" cy="420" rx="20" ry="70" fill="url(#muscleGradient)"/>
+    
+    <!-- Training ropes -->
+    <path d="M60 280 Q40 300 30 320 Q20 340 25 360 Q30 380 20 400" stroke="#333" stroke-width="8" fill="none" opacity="0.8"/>
+    <path d="M180 280 Q200 300 210 320 Q220 340 215 360 Q210 380 220 400" stroke="#333" stroke-width="8" fill="none" opacity="0.8"/>
+  </g>
+  
+  <!-- Gym equipment silhouettes in background -->
+  <g opacity="0.15" fill="#444">
+    <!-- Weight rack -->
+    <rect x="100" y="400" width="200" height="300" rx="10"/>
+    <rect x="120" y="420" width="20" height="260"/>
+    <rect x="160" y="420" width="20" height="260"/>
+    <rect x="200" y="420" width="20" height="260"/>
+    <rect x="240" y="420" width="20" height="260"/>
+    
+    <!-- Bench -->
+    <rect x="400" y="500" width="150" height="40" rx="20"/>
+    <rect x="420" y="540" width="20" height="100"/>
+    <rect x="510" y="540" width="20" height="100"/>
+    
+    <!-- Dumbbells on floor -->
+    <g transform="translate(600, 600)">
+      <rect x="0" y="15" width="60" height="10" rx="5"/>
+      <circle cx="-5" cy="20" r="15"/>
+      <circle cx="65" cy="20" r="15"/>
+    </g>
+    
+    <g transform="translate(700, 620)">
+      <rect x="0" y="15" width="60" height="10" rx="5"/>
+      <circle cx="-5" cy="20" r="15"/>
+      <circle cx="65" cy="20" r="15"/>
+    </g>
+  </g>
+  
+  <!-- Atmospheric lighting effects -->
+  <ellipse cx="1400" cy="300" rx="200" ry="100" fill="#ffffff" opacity="0.02"/>
+  <ellipse cx="1500" cy="400" rx="150" ry="80" fill="#ffffff" opacity="0.01"/>
+  
+  <!-- Subtle texture overlay -->
+  <rect width="1920" height="1080" fill="url(data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23333' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E)" opacity="0.5"/>
+</svg>
